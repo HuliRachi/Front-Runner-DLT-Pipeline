@@ -1,0 +1,46 @@
+bundle:
+  name: frontrunner-lakehouse
+
+include:
+  - resources/ingestion_pipeline.yml
+  - resources/transformation_pipeline.yml
+  - resources/orchestration_job.yml
+  - resources/dq_dashboard.yml
+  - resources/environment_bootstrap_job.yml
+
+sync:
+  paths:
+    - ../pipelines
+    - ../jobs
+    - ../setup
+    - ../monitoring/dq_dashboard_setup.ipynb
+
+variables:
+  frontrunner_catalog:
+    description: Unity Catalog catalog this target reads/writes — same
+      pipeline code, different catalog injected per environment.
+    default: dev
+
+  frontrunner_warehouse_id:
+    description: SQL warehouse ID the DQ dashboard queries run against.
+      No sensible default — set per target below.
+    default: 7ffa80bc21a73630
+
+targets:
+  dev:
+    default: true
+    workspace:
+      host: https://dbc-7719d447-7a09.cloud.databricks.com/
+
+  uat:
+    workspace:
+      host: https://dbc-7719d447-7a09.cloud.databricks.com/
+    variables:
+      frontrunner_catalog: uat
+
+  prod:
+    workspace:
+      host: https://dbc-c6a11b86-be1a.cloud.databricks.com/
+    variables:
+      frontrunner_catalog: prod
+      frontrunner_warehouse_id: e3d4bc3a4cc4b6e3

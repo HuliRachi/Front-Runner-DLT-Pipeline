@@ -1,0 +1,20 @@
+resources:
+  pipelines:
+    frontrunner_transformation_pipeline:
+      name: frontrunner-transformation-pipeline
+      serverless: true
+      allow_duplicate_names: true
+      tags:
+        environment: ${bundle.target}
+
+      root_path: ${workspace.file_path}/pipelines/transformation_pipeline
+
+      catalog: ${var.frontrunner_catalog}
+      schema: frontrunner
+
+      configuration:
+        frontrunner.catalog: ${var.frontrunner_catalog}
+
+      libraries:
+        - glob:
+            include: ../../pipelines/transformation_pipeline/transformations/**
