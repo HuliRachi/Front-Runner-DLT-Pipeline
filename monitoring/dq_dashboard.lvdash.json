@@ -1,0 +1,229 @@
+{
+  "datasets": [
+    {
+      "name": "b859806e",
+      "displayName": "Expectations",
+      "queryLines": [
+        "SELECT * FROM dq_expectations_history;"
+      ],
+      "catalog": "dev",
+      "schema": "frontrunner"
+    },
+    {
+      "name": "3b39f673",
+      "displayName": "Quarantine",
+      "queryLines": [
+        "SELECT * FROM dq_quarantine_counts;"
+      ],
+      "catalog": "dev",
+      "schema": "frontrunner"
+    },
+    {
+      "name": "434b7320",
+      "displayName": "Orphans",
+      "queryLines": [
+        "SELECT * FROM dq_referential_integrity;"
+      ],
+      "catalog": "dev",
+      "schema": "frontrunner"
+    }
+  ],
+  "pages": [
+    {
+      "name": "be859fef",
+      "displayName": "Expectations",
+      "layout": [
+        {
+          "widget": {
+            "name": "0e135cf9",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b859806e",
+                  "fields": [
+                    {
+                      "name": "failed_records",
+                      "expression": "`failed_records`"
+                    },
+                    {
+                      "name": "passed_records",
+                      "expression": "`passed_records`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "failed_records",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "passed_records",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "44f487dc",
+      "displayName": "Quarantine",
+      "layout": [
+        {
+          "widget": {
+            "name": "94f16404",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "3b39f673",
+                  "fields": [
+                    {
+                      "name": "quarantined_count",
+                      "expression": "`quarantined_count`"
+                    },
+                    {
+                      "name": "checked_at",
+                      "expression": "`checked_at`"
+                    },
+                    {
+                      "name": "source",
+                      "expression": "`source`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "quarantined_count"
+                  },
+                  {
+                    "fieldName": "checked_at"
+                  },
+                  {
+                    "fieldName": "source"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 1,
+            "width": 6,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "262644e2",
+      "displayName": "Orphans",
+      "layout": [
+        {
+          "widget": {
+            "name": "061340f4",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "434b7320",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    },
+                    {
+                      "name": "monthly(checked_at)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `checked_at`)"
+                    },
+                    {
+                      "name": "sum(orphaned_count)",
+                      "expression": "SUM(`orphaned_count`)"
+                    },
+                    {
+                      "name": "relationship",
+                      "expression": "`relationship`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "count(*)"
+                  },
+                  {
+                    "fieldName": "monthly(checked_at)"
+                  },
+                  {
+                    "fieldName": "sum(orphaned_count)"
+                  },
+                  {
+                    "fieldName": "relationship"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 0,
+            "width": 8,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
