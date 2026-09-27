@@ -1,0 +1,21 @@
+product_id,sku,name,category,weight_kg,price_usd
+7162d92e-7474-4129-ac46-58f36e112c88,SK-FR-LIG-101,Front-Runner Lighting Component v1,Lighting,29.46,947.12
+f81cf2a4-c197-4121-8d7a-d6f5273ffaf8,SK-FR-ROO-102,Front-Runner Roof Racks Component v2,Roof Racks,15.51,585.94
+00337458-d035-4db4-990d-b4e4d2f93a59,SK-FR-BRA-103,Front-Runner Brackets Component v3,Brackets,11.17,821.31
+50234fa3-d77d-437a-8011-ac8c04abfbdf,SK-FR-LIG-104,Front-Runner Lighting Component v4,Lighting,42.0,405.76
+ae74dfac-7938-43f4-b0f7-3832c36bc2d7,SK-FR-ROO-105,Front-Runner Roof Racks Component v5,Roof Racks,40.51,624.2
+a76e214a-75b5-428e-b1da-0816b45f126b,SK-FR-ROO-106,Front-Runner Roof Racks Component v6,Roof Racks,35.88,785.5
+52ff8a4d-5c4d-44b3-88ac-05a67d386bbd,SK-FR-CAM-107,Front-Runner Camping Component v7,Camping,27.36,171.03
+397f2223-fb47-4cd5-87a3-8d402243157e,SK-FR-STO-108,Front-Runner Storage Component v8,Storage,4.08,108.79
+f08ddd38-ad09-460e-bec4-4fb4edca9beb,SK-FR-STO-109,Front-Runner Storage Component v9,Storage,33.37,556.79
+6add69c5-d1aa-44e9-9e51-490d216ac675,SK-FR-LIG-110,Front-Runner Lighting Component v10,Lighting,8.76,655.73
+7cb6fde1-2144-4202-9652-0cdd36510b98,SK-FR-BRA-111,Front-Runner Brackets Component v11,Brackets,4.64,173.51
+ec2850b8-fc47-4470-a570-5e9103b90ad2,SK-FR-LIG-112,Front-Runner Lighting Component v12,Lighting,22.34,935.01
+5184a080-a712-420d-a049-e5564a7551ab,SK-FR-LIG-113,Front-Runner Lighting Component v13,Lighting,10.01,217.3
+575c47bd-865a-42be-bf95-8bc4c21e2ecf,SK-FR-LIG-114,Front-Runner Lighting Component v14,Lighting,26.18,406.8
+f10d8369-b54a-4cd5-8f8f-bec187cdaf31,SK-FR-ROO-115,Front-Runner Roof Racks Component v15,Roof Racks,38.06,541.33
+cc82e0a5-f438-41c5-be83-88a09bcc95b5,SK-FR-BRA-116,Front-Runner Brackets Component v16,Brackets,19.56,934.38
+d6c28dcb-d7c3-443a-a5df-fe3c69ac1fec,SK-FR-STO-117,Front-Runner Storage Component v17,Storage,42.36,940.78
+74d840a1-fef9-4e47-91b9-e9fa2f9efebb,SK-FR-BRA-118,Front-Runner Brackets Component v18,Brackets,27.83,189.48
+36d27a88-e61d-4bdb-ba06-2f6970af8da5,SK-FR-BRA-119,Front-Runner Brackets Component v19,Brackets,2.83,160.41
+c2cc3021-e94d-483b-afd9-2c3375399f38,SK-FR-CAM-120,Front-Runner Camping Component v20,Camping,16.92,456.05

@@ -1,0 +1,11 @@
+resources:
+  dashboards:
+    frontrunner_dq_dashboard:
+      display_name: "Frontrunner DQ Dashboard"
+      
+      file_path: ../../monitoring/dq_dashboard.lvdash.json
+
+      warehouse_id: ${var.frontrunner_warehouse_id}
+
+      dataset_catalog: ${var.frontrunner_catalog}
+      dataset_schema: frontrunner
