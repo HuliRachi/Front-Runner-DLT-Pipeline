@@ -93,7 +93,7 @@ def uat_resource_ids(workspace_client: WorkspaceClient) -> UatResourceIds:
     )
  
  
-@pytest.fixture
+@pytest.fixture(scope="function")
 def reset_uat(workspace_client: WorkspaceClient):
     """
     Cleans up landing volumes before test execution.
