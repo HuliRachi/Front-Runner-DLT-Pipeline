@@ -12,10 +12,6 @@ The processed datasets are aggregated into optimized Gold reporting layers to so
 
 The pipeline processes data through three distinct architectural layers to refine raw telemetry hits into production-ready analytical dashboards:
 
-## Data Infrastructure Architecture
-
-The pipeline processes data through three distinct architectural layers to refine raw telemetry hits into production-ready analytical dashboards:
-
 ```text
 [ Landing Zone Volumes ]
        │
@@ -45,7 +41,6 @@ The pipeline processes data through three distinct architectural layers to refin
 * **Orchestration & Compute Runtime:** Databricks Asset Bundles (DAB), Delta Live Tables (DLT)
 * **Data Processing Processing Engines:** PySpark (Spark Structured Streaming, Spark SQL)
 * **Storage Standard Framework:** Delta Lake (Parquet engine under Unity Catalog)
-* **Environment Configuration Management:** Infrastructure-as-Code (IaC) via YAML declarative blocks
 * **Automation Workflow Framework:** GitHub Actions CI/CD Pipeline
 * **Testing Execution Infrastructure:** Pytest, Databricks Python SDK (v0.67.0+)
 
@@ -112,15 +107,6 @@ The logical relationship models built between conformed Silver layers inside Uni
  └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Installation & Deployment Guide
-
-### Prerequisites
-1. Install Python 3.12+
-2. Install the Databricks CLI v0.200+
-3. Authenticate your Databricks profile credentials locally using:
-   ```bash
-   databricks auth login --host https://<your-databricks-instance-url>
-   ```
 
 ### Manual Infrastructure Deployment
 1. Move into the configuration bundle root directory:
