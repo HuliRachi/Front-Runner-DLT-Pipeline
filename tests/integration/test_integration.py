@@ -73,32 +73,34 @@ def _table_count_safe(workspace_client, catalog: str, warehouse_id: str, table: 
 
 
 def test_orchestration_job_end_to_end(
-    workspace_client, uat_resource_ids, reset_uat
+    workspace_client, uat_resource_ids
 ):
     """
     Core End-to-End Integration Test:
-    Generates minimal data, uploads it to landing volumes, triggers DLT pipeline 
-    updates sequentially, and validates complete data conservation across layers.
+    Cleans landing volumes, uploads fresh test data, and triggers ONLY the
+    master orchestration job to run the complete end-to-end data pipeline.
     """
+    catalog = "uat"
+    landing_root = f"/Volumes/{catalog}/frontrunner/landing"
+    subfolders = ["customers_cdc", "products", "clickstream"]
+    
+    # 1. Clean the Volume folders to remove old test runs
+    for folder in subfolders:
+        dir_path = f"{landing_root}/{folder}"
+        try:
+            for entry in workspace_client.files.list_directory_contents(dir_path):
+                workspace_client.files.delete(f"{dir_path}/{entry.name}")
+        except Exception:
+            pass
+
+    # 2. Generate small sample test data
     batch_dir = _generate_fixed_seed_batch()
     
-    catalog = "uat"
+    # 3. Upload files to the Landing Volume
     _upload_batch_to_landing(workspace_client, batch_dir, catalog=catalog)
  
-    workspace_client.pipelines.start_update(
-        pipeline_id=uat_resource_ids.ingestion_pipeline_id, full_refresh=True
-    )
-    workspace_client.pipelines.wait_get_pipeline_idle(
-        pipeline_id=uat_resource_ids.ingestion_pipeline_id
-    )
- 
-    workspace_client.pipelines.start_update(
-        pipeline_id=uat_resource_ids.transformation_pipeline_id, full_refresh=True
-    )
-    workspace_client.pipelines.wait_get_pipeline_idle(
-        pipeline_id=uat_resource_ids.transformation_pipeline_id
-    )
- 
+    # 4. Trigger ONLY the master Orchestration Job
+    # This automatically invokes the underlying pipelines in the correct order
     run = workspace_client.jobs.run_now(
         job_id=int(uat_resource_ids.orchestration_job_id),
     ).result()
@@ -107,6 +109,7 @@ def test_orchestration_job_end_to_end(
         f"Master orchestration run failed: {run.state.state_message}"
     )
  
+    # 5. --- Data Conservation Volume Assertions ---
     for source, expected_total in EXPECTED_LANDING_COUNTS.items():
         valid = _table_count_safe(
             workspace_client, catalog, uat_resource_ids.warehouse_id, f"bronze_{source}_valid"
@@ -115,11 +118,13 @@ def test_orchestration_job_end_to_end(
             workspace_client, catalog, uat_resource_ids.warehouse_id, f"bronze_{source}_quarantined"
         )
         
+        # Verify that total parsed rows equal the initial generated batch total exactly
         assert valid + quarantined == expected_total, (
             f"Row mismatch on bronze_{source}! Got {valid + quarantined} rows, "
             f"expected {expected_total}. System dropped records during delta loads."
         )
 
+    # 6. --- Data Quality Clean-Run Assertions ---
     for source in EXPECTED_LANDING_COUNTS.keys():
         quarantined = _table_count_safe(
             workspace_client, catalog, uat_resource_ids.warehouse_id, f"bronze_{source}_quarantined"
