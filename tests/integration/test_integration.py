@@ -26,7 +26,6 @@ def _generate_fixed_seed_batch() -> str:
     )
     assert result.returncode == 0, f"data_generator.py execution failed:\n{result.stderr}"
     
-    # Returns the hardcoded directory name created by the generator script
     return "batch_01"
 
 
@@ -67,11 +66,9 @@ def _table_count_safe(workspace_client, catalog: str, warehouse_id: str, table: 
             wait_timeout="30s",
         )
         if result.status.state.value == "SUCCEEDED":
-            # Extract row integer value out of the nested result array payload
             return int(result.result.data_array[0][0])
         return 0
     except Exception:
-        # Gracefully handles lazy-created DLT tables that are missing from disk
         return 0
 
 
@@ -83,14 +80,11 @@ def test_orchestration_job_end_to_end(
     Generates minimal data, uploads it to landing volumes, triggers DLT pipeline 
     updates sequentially, and validates complete data conservation across layers.
     """
-    # 1. Generate minor sample data batch volumes
     batch_dir = _generate_fixed_seed_batch()
     
-    # 2. Upload assets directly into UAT Landing Zone Volume
     catalog = "uat"
     _upload_batch_to_landing(workspace_client, batch_dir, catalog=catalog)
  
-    # 3. Trigger Ingestion DLT Pipeline (Bronze Layer)
     workspace_client.pipelines.start_update(
         pipeline_id=uat_resource_ids.ingestion_pipeline_id, full_refresh=True
     )
@@ -98,7 +92,6 @@ def test_orchestration_job_end_to_end(
         pipeline_id=uat_resource_ids.ingestion_pipeline_id
     )
  
-    # 4. Trigger Transformation DLT Pipeline (Silver & Gold Layers)
     workspace_client.pipelines.start_update(
         pipeline_id=uat_resource_ids.transformation_pipeline_id, full_refresh=True
     )
@@ -106,7 +99,6 @@ def test_orchestration_job_end_to_end(
         pipeline_id=uat_resource_ids.transformation_pipeline_id
     )
  
-    # 5. Run the master wrapper Orchestration Job task
     run = workspace_client.jobs.run_now(
         job_id=int(uat_resource_ids.orchestration_job_id),
     ).result()
@@ -115,7 +107,6 @@ def test_orchestration_job_end_to_end(
         f"Master orchestration run failed: {run.state.state_message}"
     )
  
-    # 6. --- Data Conservation Volume Assertions ---
     for source, expected_total in EXPECTED_LANDING_COUNTS.items():
         valid = _table_count_safe(
             workspace_client, catalog, uat_resource_ids.warehouse_id, f"bronze_{source}_valid"
@@ -124,13 +115,11 @@ def test_orchestration_job_end_to_end(
             workspace_client, catalog, uat_resource_ids.warehouse_id, f"bronze_{source}_quarantined"
         )
         
-        # Verify that total parsed rows equal the initial generated batch total
         assert valid + quarantined == expected_total, (
             f"Row mismatch on bronze_{source}! Got {valid + quarantined} rows, "
             f"expected {expected_total}. System dropped records during delta loads."
         )
 
-    # 7. --- Data Quality Clean-Run Assertions ---
     for source in EXPECTED_LANDING_COUNTS.keys():
         quarantined = _table_count_safe(
             workspace_client, catalog, uat_resource_ids.warehouse_id, f"bronze_{source}_quarantined"
