@@ -2,18 +2,16 @@ import os
 import subprocess
 import pytest
 
-# --- ALIGNED TARGETS: Matches your generator's hardcoded outputs exactly ---
 EXPECTED_LANDING_COUNTS = {
-    "customers": 15,    # Aligned with TOTAL_CUSTOMERS = 15
-    "products": 20,     # Aligned with TOTAL_PRODUCTS = 20
-    "clickstream": 55,  # Aligned with TOTAL_EVENTS = 55
+    "customers": 15,    
+    "products": 20,     
+    "clickstream": 55,  
 }
 
 def _generate_fixed_seed_batch() -> str:
     """
     Executes the data generator via a CLI subprocess.
     """
-    # Call the generator cleanly without flags to prevent script execution issues
     result = subprocess.run(
         ["python3", "../../data_generator.py"],
         capture_output=True,
@@ -77,7 +75,6 @@ def test_orchestration_job_end_to_end(
     landing_root = f"/Volumes/{catalog}/frontrunner/landing"
     subfolders = ["customers_cdc", "products", "clickstream"]
     
-    # 1. Clean landing volumes to ensure only current batch files exist
     for folder in subfolders:
         dir_path = f"{landing_root}/{folder}"
         try:
@@ -86,20 +83,16 @@ def test_orchestration_job_end_to_end(
         except Exception:
             pass
 
-    # 2. Capture the baseline counts *before* the job executes incremental updates
     initial_counts = {}
     for source in EXPECTED_LANDING_COUNTS.keys():
         v_count = _table_count_safe(workspace_client, catalog, uat_resource_ids.warehouse_id, f"bronze_{source}_valid")
         q_count = _table_count_safe(workspace_client, catalog, uat_resource_ids.warehouse_id, f"bronze_{source}_quarantined")
         initial_counts[source] = v_count + q_count
 
-    # 3. Generate sample data
     batch_dir = _generate_fixed_seed_batch()
     
-    # 4. Upload files to the Landing Volume
     _upload_batch_to_landing(workspace_client, batch_dir, catalog=catalog)
  
-    # 5. Trigger the master Orchestration Job
     run = workspace_client.jobs.run_now(
         job_id=int(uat_resource_ids.orchestration_job_id),
     ).result()
@@ -108,7 +101,6 @@ def test_orchestration_job_end_to_end(
         f"Master orchestration run failed: {run.state.state_message}"
     )
  
-    # 6. --- Production-Grade Relative Delta Volume Assertions ---
     for source, expected_new_rows in EXPECTED_LANDING_COUNTS.items():
         valid = _table_count_safe(
             workspace_client, catalog, uat_resource_ids.warehouse_id, f"bronze_{source}_valid"
@@ -120,7 +112,6 @@ def test_orchestration_job_end_to_end(
         final_total = valid + quarantined
         net_new_processed = final_total - initial_counts[source]
         
-        # Verify that exactly the new rows were appended cleanly
         assert net_new_processed == expected_new_rows, (
             f"Row mismatch on bronze_{source}! Expected precisely {expected_new_rows} "
             f"new records to process, but the table grew by {net_new_processed} rows."

@@ -121,6 +121,13 @@ The logical relationship models built between conformed Silver layers inside Uni
    ```bash
    databricks bundle deploy --target uat
    ```
+4. Validate the bundle layout logic templates:
+   ```bash
+   databricks bundle validate --target prod
+   ```
+5. Deploy the structural workflows and tables up to the target environment space:
+   ```bash
+   databricks bundle deploy --target prod
 
 ## Testing Strategy
 
