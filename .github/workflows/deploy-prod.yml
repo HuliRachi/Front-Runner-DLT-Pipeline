@@ -60,7 +60,7 @@ jobs:
 
       - name: Run environment bootstrap
         working-directory: bundle
-        run: databricks bundle run stepright_environment_bootstrap --target prod
+        run: databricks bundle run frontrunner_environment_bootstrap --target prod
 
       - name: Run smoke tests
         working-directory: tests/smoke
