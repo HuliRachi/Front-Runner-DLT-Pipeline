@@ -35,7 +35,6 @@ def uat_resource_ids(workspace_client: WorkspaceClient) -> UatResourceIds:
     warehouse_id = None
 
     try:
-        # 1. Fetch Pipeline IDs dynamically using exact dash matching
         for p in workspace_client.pipelines.list_pipelines():
             name_lower = p.name.lower()
             if "ingestion-pipeline" in name_lower and "frontrunner" in name_lower:
@@ -43,7 +42,6 @@ def uat_resource_ids(workspace_client: WorkspaceClient) -> UatResourceIds:
             elif "transformation-pipeline" in name_lower and "frontrunner" in name_lower:
                 transformation_id = p.pipeline_id
                 
-        # 2. Fetch Orchestration Job ID using exact dash matching
         for j in workspace_client.jobs.list():
             current_name = ""
             if hasattr(j, "settings") and j.settings and hasattr(j.settings, "name"):
@@ -56,7 +54,6 @@ def uat_resource_ids(workspace_client: WorkspaceClient) -> UatResourceIds:
                 orchestration_id = j.job_id
                 break
 
-        # 3. Fetch SQL Warehouse ID by name lookup
         for w in workspace_client.warehouses.list():
             if "warehouse" in w.name.lower() or "frontrunner" in w.name.lower():  
                 warehouse_id = w.id
@@ -65,7 +62,6 @@ def uat_resource_ids(workspace_client: WorkspaceClient) -> UatResourceIds:
     except Exception as e:
         pytest.fail(f"Failed to query workspace metadata using Databricks SDK: {str(e)}")
 
-    # 4. Fallback validation checks
     missing_resources = []
     if not ingestion_id: missing_resources.append("frontrunner-ingestion-pipeline")
     if not transformation_id: missing_resources.append("frontrunner-transformation-pipeline")
@@ -81,7 +77,6 @@ def uat_resource_ids(workspace_client: WorkspaceClient) -> UatResourceIds:
             f"Actual jobs found in workspace: {actual_jobs}"
         )
 
-    # Fallback to your warehouse parameter from databricks.yml if name isn't matched
     if not warehouse_id:
         warehouse_id = "7ffa80bc21a73630"
 

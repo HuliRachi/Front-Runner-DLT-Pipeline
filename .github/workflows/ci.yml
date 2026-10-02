@@ -19,11 +19,11 @@ jobs:
       - name: Install test dependencies
         run: pip install pytest "pyspark>=3.5"
 
-      # - name: Run ingestion_pipeline unit tests
-      #   run: pytest pipelines/ingestion_pipeline/tests -v
+      - name: Run ingestion_pipeline unit tests
+        run: pytest pipelines/ingestion_pipeline/tests -v
 
-      # - name: Run transformation_pipeline unit tests
-      #   run: pytest pipelines/transformation_pipeline/tests -v
+      - name: Run transformation_pipeline unit tests
+        run: pytest pipelines/transformation_pipeline/tests -v
 
   validate-and-deploy-uat:
     needs: unit-test
@@ -60,17 +60,17 @@ jobs:
           print('Catalog uat ensured (created if missing, no-op if already present)')
           "
 
-      # - name: Validate bundle
-      #   working-directory: bundle
-      #   run: databricks bundle validate --target uat
+      - name: Validate bundle
+        working-directory: bundle
+        run: databricks bundle validate --target uat
 
-      # - name: Deploy bundle
-      #   working-directory: bundle
-      #   run: databricks bundle deploy --target uat
+      - name: Deploy bundle
+        working-directory: bundle
+        run: databricks bundle deploy --target uat
 
-      # - name: Run environment bootstrap
-      #   working-directory: bundle
-      #   run: databricks bundle run frontrunner_environment_bootstrap --target uat
+      - name: Run environment bootstrap
+        working-directory: bundle
+        run: databricks bundle run frontrunner_environment_bootstrap --target uat
 
   integration-test:
     needs: validate-and-deploy-uat
