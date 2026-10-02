@@ -2,30 +2,24 @@ import os
 import subprocess
 import pytest
 
-# --- CONFIGURABLE TARGETS: Tiny sample data profiles for fast E2E validation ---
+# --- ALIGNED TARGETS: Matches your generator's hardcoded outputs exactly ---
 EXPECTED_LANDING_COUNTS = {
-    "customers": 2,
-    "products": 3,
-    "clickstream": 5,
+    "customers": 15,    # Aligned with TOTAL_CUSTOMERS = 15
+    "products": 20,     # Aligned with TOTAL_PRODUCTS = 20
+    "clickstream": 55,  # Aligned with TOTAL_EVENTS = 55
 }
 
 def _generate_fixed_seed_batch() -> str:
     """
-    Executes the data generator via a CLI subprocess, overriding target limits
-    dynamically to generate small test slices rather than production scales.
+    Executes the data generator via a CLI subprocess.
     """
+    # Call the generator cleanly without flags to prevent script execution issues
     result = subprocess.run(
-        [
-            "python3", "../../data_generator.py",
-            f"--n-customers={EXPECTED_LANDING_COUNTS['customers']}",
-            f"--n-products={EXPECTED_LANDING_COUNTS['products']}",
-            f"--n-clickstream={EXPECTED_LANDING_COUNTS['clickstream']}",
-        ],
+        ["python3", "../../data_generator.py"],
         capture_output=True,
         text=True,
     )
     assert result.returncode == 0, f"data_generator.py execution failed:\n{result.stderr}"
-    
     return "batch_01"
 
 
@@ -55,7 +49,6 @@ def _upload_batch_to_landing(workspace_client, batch_dir: str, catalog: str):
 def _table_count_safe(workspace_client, catalog: str, warehouse_id: str, table: str) -> int:
     """
     Queries table volumes via the Databricks SQL Statement Execution API.
-    Returns 0 safely if target quarantine tables have not been created yet by DLT.
     """
     try:
         result = workspace_client.statement_execution.execute_statement(
@@ -100,7 +93,7 @@ def test_orchestration_job_end_to_end(
         q_count = _table_count_safe(workspace_client, catalog, uat_resource_ids.warehouse_id, f"bronze_{source}_quarantined")
         initial_counts[source] = v_count + q_count
 
-    # 3. Generate small sample test data
+    # 3. Generate sample data
     batch_dir = _generate_fixed_seed_batch()
     
     # 4. Upload files to the Landing Volume
